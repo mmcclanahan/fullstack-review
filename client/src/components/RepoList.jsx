@@ -4,10 +4,12 @@ const RepoList = (props) => {
   console.log(props.repo)
   //access to prop.repo has userName,repoName,url,stars
   var repo = props.repo;
+
   return (
     <li>
-    <h6></h6>
-    User: {repo.userName}  Repo Name: {repo.repoName}  Number of Stars: {repo.stars}
+
+      {repo.userName}'s  <a href={repo.url}>{repo.repoName}</a> has {repo.stars} stars.
+
     </li>
   )
 }

@@ -19,7 +19,8 @@ let save = (arrayOfRepoObjects) => {
   // This function should save a repo or repos to
   // the MongoDB
   //create new instances out of repo for all of them
-  let arrayOfRepoInstances = arrayOfRepoObjects.map(repo => new Repo(repo));
+  let arrayOfRepoInstances = arrayOfRepoObjects.map(repo => new Repo(repo)); //.save() on end instead of return repo insert many
+  //Promise.all()
   //insert all instances into the collection using insertMany
   return Repo.insertMany(arrayOfRepoInstances)
   .then(() => {
@@ -35,7 +36,10 @@ let save = (arrayOfRepoObjects) => {
 }
 //access the db and get the top 25 stars
 let get25 = (callback) => {
-  Repo.find().sort({ stars: -1 }).limit(25)
+  //use find sort and limit to
+  //return
+
+  Repo.find({}).sort({ stars: -1 }).limit(25)
   .exec((error, repo25) => {
     if (error) {
       callback(error, null)

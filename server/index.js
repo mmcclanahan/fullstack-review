@@ -16,7 +16,7 @@ app.post('/repos', function (req, res) {
   ApiMethod.getReposByUsername(req.body.userName)
   //with the results from github function
   .then(arrayOfRepos => {
-    //call the save function on the repos array
+    //call the save function on the repos array ?.then after db.save instead of
     db.save(arrayOfRepos)
     res.status(200).send('repos saved')
     })

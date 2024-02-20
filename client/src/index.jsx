@@ -28,12 +28,12 @@ const App = () => {
       console.log(response,'axiospost app.jsx')
       // use get method setRepos(response.data);
       axios.get('/repos')
-    .then(results => {
-      setRepos(results);
-    })
-    .catch(error => {
-      console.log('app couldnt get repos')
-    })
+      .then(results => {
+        setRepos(results.data);
+      })
+      .catch(error => {
+        console.log('app couldnt get repos after post')
+      })
     })
     .catch(function(error) {
       console.log(error, 'axiospost error')

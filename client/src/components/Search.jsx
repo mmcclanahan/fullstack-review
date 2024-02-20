@@ -6,6 +6,7 @@ const Search = ({ onSearch }) => {
 
   const onChange = (e) => {
     setTerm(e.target.value);
+    console.log(term);
   }
 
   const search = () => {

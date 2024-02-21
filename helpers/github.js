@@ -14,18 +14,7 @@ let getReposByUsername = (userName) => {
     }
   };//return the promise write out the then and catch
   return axios.get(options.url, options)
-  .then(response => {
-    return response.data.map(obj => ({
-      'userName': obj.owner.login,
-      'repoName': obj.name,
-      'url': obj.html_url,
-      'stars': obj.stargazers_count,
-      'id': obj.id
-    }));
-  })
-  .catch(err => {
-    console.log('error at github repo get')
-  })
+
 }
 
 module.exports.getReposByUsername = getReposByUsername;

@@ -23,22 +23,19 @@ const App = () => {
 
   const search = (term) => {
     console.log(`${term} was searched`);
-    axios.post('/repos', { 'userName': term })
-    .then(function(response) {
-      console.log(response,'axiospost app.jsx')
-      // use get method setRepos(response.data);
-      axios.get('/repos')
-      .then(results => {
-        setRepos(results.data);
-      })
-      .catch(error => {
-        console.log('app couldnt get repos after post')
-      })
+    //try put modifications here
+    axios.post('/repos', { userName: term })
+    .then(() => {
+      return axios.get('/repos')
     })
-    .catch(function(error) {
-      console.log(error, 'axiospost error')
+    .then((response) => {
+      setRepos(response.data);
+    })
+    .catch((err) => {
+      console.error('Failed to set repos ', err);
     })
   }
+
 
   return (
     <div>

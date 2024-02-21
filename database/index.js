@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/fetcher', { useNewUrlParser: true, useUnifiedTopology: true });
-
+//db named fetcher // like create database chat
+//use fetcher
+mongoose.connect('mongodb://localhost/fetcher');
+//repoSchema like table schema
 let repoSchema = mongoose.Schema({
   userName: String,
   repoName: String,
@@ -8,20 +10,22 @@ let repoSchema = mongoose.Schema({
   stars: Number,
   id: { type: Number, unique: true}
 });
-
+//create a model to use to create instances of it (documents)that get stored in fetcher
+//it creates 'repos'
 let Repo = mongoose.model('Repo', repoSchema);
 
-//const newRepo = new Repo({userName: 'username', repoList: ['repo objects']})
-//return newRepo.save().then
-//take in the object
+//Repo.create  creates new document and saves it to database in single step
+//new Repo creates new document   then .save or orther functions saves it to the database
+//always return a promise from a sync function
 let save = (arrayOfRepoObjects) => {
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
-  //create new instances out of repo for all of them
-  let arrayOfRepoInstances = arrayOfRepoObjects.map(repo => new Repo(repo)); //.save() on end instead of return repo insert many
-  //Promise.all()
-  //insert all instances into the collection using insertMany
+  return Repo.create(arrayOfRepoObjects);
+  /* or
+  return Promise.all(arrayOfRepoObjects.map(repo => {
+    return new Repo(repo).save()
+  }))
+  */
+  /* this was my working code
+  let arrayOfRepoInstances = arrayOfRepoObjects.map(repo => new Repo(repo));
   return Repo.insertMany(arrayOfRepoInstances)
   .then(() => {
     console.log('saved repos');
@@ -32,22 +36,17 @@ let save = (arrayOfRepoObjects) => {
     } else {
       console.error('error saving')
     }
-  })
+  })*/
 }
-//access the db and get the top 25 stars
-let get25 = (callback) => {
-  //use find sort and limit to
-  //return
 
-  Repo.find({}).sort({ stars: -1 }).limit(25)
-  .exec((error, repo25) => {
-    if (error) {
-      callback(error, null)
-    } else {
-      callback(null, repo25);
-    }
-  })
+//access the db and get the top 25 stars
+let get25 = () => {
+  return Repo.find({})
+    .sort({ stars: -1 })
+    .limit(25)
+    .exec()
 }
 
 module.exports.save = save;
+module.exports.Repo = Repo;
 module.exports.get25 = get25;

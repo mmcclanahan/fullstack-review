@@ -9,33 +9,55 @@ let app = express();
 app.use(express.static('./client/dist'))
 app.use(express.json());
 const ApiMethod = require('../helpers/github.js');
-const db = require('../database/index.js');
+const {save, get25} = require('../database');
+
 //search btn press sends {userName: name}
 app.post('/repos', function (req, res) {
   //call the github function with the username supplied from input
   ApiMethod.getReposByUsername(req.body.userName)
   //with the results from github function
-  .then(arrayOfRepos => {
-    //call the save function on the repos array ?.then after db.save instead of
-    db.save(arrayOfRepos)
-    res.status(200).send('repos saved')
-    })
-  .catch(error => {
-    res.status(500).send('server error')
+  .then(response => {
+    return arrayOfRepos = response.data.map(obj => {
+      return {
+        'userName': obj.owner.login,
+        'repoName': obj.name,
+        'url': obj.html_url,
+        'stars': obj.stargazers_count,
+        'id': obj.id
+      }
+    });
   })
+  .then(resultArray => {
+    //call the save function on the repos array
+    return save(resultArray)
+  })
+  //then respond with a success message
+  .then(() => {
+    res.status(201).send('repos saved')
+  })//respond with an error if save went wrong
+  .catch((error) => {
+    if (error.code === 11000) {
+      res.status(409).send('duplicate input')
+    } else {
+      res.status(500).send('github couldnt find user')
+    }
+  })
+  //catch error of github request where to put it
+  //.catch(error => {
+  //  res.status(500).send('github server error')
+  //})
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
-  db.get25((error, results) => {
-    if (error) {
-      res.status(500).send('couldnt get top25')
-    } else {
-      res.status(200).json(results);
-      console.log(results, 'app.get')
-    }
-  })
+  get25()
+    .then((data) => {
+      console.log('then get25')
+      res.status(200).send(data)
+    })
+    .catch(() => {
+      console.log('get catch')
+      res.status(500).send('couldnt get duplicate')
+    })
 });
 
 let port = 1128;
